@@ -1,26 +1,25 @@
 package Client;
 
 import java.io.IOException;
-import java.net.*;
-import java.rmi.server.RMIClientSocketFactory;
 
 public class ClientRoot {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String sHost		= "Localhost";
-		int iPort			= 8000;
-		boolean bClientIsOK	= true;
-		Socket clientSocket = null;
-		
+		OnRDPStart();
+	}
+	
+	public static long OnRDPStart() {
+		long result = -1;
+		ProcessBuilder rdpProcessBuilder = new ProcessBuilder("mstsc.exe", "/v:217.147.22.90:34389");
 		try {
-			clientSocket = new Socket(sHost, iPort);
+			Process rdpProcess =  rdpProcessBuilder.start();
+			if(rdpProcess.isAlive()) {
+				result = rdpProcess.pid();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			bClientIsOK = false;
 		}
-		
-		//clientSocket
+		return result;
 	}
 
 }
