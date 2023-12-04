@@ -49,7 +49,7 @@ public class ClientRoot {
 					if(Integer.valueOf(processArr[1].replace("\"", "")) == processID) {
 						isRDPProcessFinded = true;
 						System.out.println("Process " + processID + " is running");
-						Thread.sleep(10 * 1000);
+						Thread.sleep(3 * 1000);
 						break;
 					}
 				}
