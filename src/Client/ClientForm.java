@@ -5,10 +5,16 @@ import javax.swing.JFrame;
 
 import DBManager.DBManager;
 import DBManager.DataLines;
+import DBManager.DataLines.RDPLine;
+import DBManager.r_RDP;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Hashtable;
+
 import javax.swing.JTree;
+import javax.swing.tree.TreeModel;
+
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import java.awt.event.ItemListener;
@@ -63,19 +69,22 @@ public class ClientForm {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JTree tree = new JTree();
-		tree.setBounds(230, 0, 204, 261);
-		frame.getContentPane().add(tree);
-		
 		JButton btnNewButton = new JButton("test write");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dbm.AddNewRDPLine(new DataLines.RDPLine());
+				//dbm.AddNewRDPLine(new DataLines.RDPLine());
+				//System.out.println(r_RDP.getTableName(r_RDP.class));
+				DataLines.RDPLine testData = new RDPLine("brc1", "", -1);
+				dbm.getRDPRec().addNewLine(testData);
 			}
 		});
 		btnNewButton.setBounds(10, 22, 89, 23);
 		frame.getContentPane().add(btnNewButton);
+		
+		JTree RDPTree = new JTree(fillRDPTree());
+		RDPTree.setBounds(248, 0, 186, 261);
+		frame.getContentPane().add(RDPTree);
 	}
 	
 	
@@ -84,11 +93,29 @@ public class ClientForm {
 	private static DBManager dbm = new DBManager();
 	
 	public void onWindowOpened(WindowEvent we) {
-		dbm.Connect();
+		if(dbm.connect()) {
+			dbm.initTables();
+			dbm.checkTables();
+		}
 	}
 	
 	
 	public void onWindowClosing(WindowEvent we) {
-		dbm.Close();
+		dbm.close();
+	}
+	
+	public Hashtable fillRDPTree() {
+		Hashtable root = new Hashtable();
+		Hashtable subTree = new Hashtable();
+		root.put("Узел 1", subTree);
+		subTree.put("Elem 1", new Integer(101));
+		subTree.put("Elem 2", new Integer(102));
+		Hashtable subTree2 = new Hashtable();
+		root.put("Узел 2", subTree2);
+		subTree2.put("Elem 2_1", new Integer(201));
+		subTree2.put("Elem 2_2", new Integer(202));
+		subTree2.put("Elem 2_3", new Integer(203));
+		subTree2.put("Elem 2_4", new Integer(204));
+		return root;
 	}
 }

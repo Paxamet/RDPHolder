@@ -9,9 +9,9 @@ public class ServerRoot {
 	 */
 	public static void main(String[] args) {
 		DBManager db = new DBManager();
-		db.Connect();
+		db.connect();
 		
-		db.Close();
+		db.close();
 	}
 
 }

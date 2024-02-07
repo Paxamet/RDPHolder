@@ -17,7 +17,9 @@ public class DBManager {
 	
 	private Connection connection;
 	
-	
+	//TABLES
+	private r_RDP rec_RDP;
+	//TABLES
 	
 	public DBManager()
 	{
@@ -27,8 +29,8 @@ public class DBManager {
 		classForName 		= "org.sqlite.JDBC";
 	}
 	
-	public void Connect() {
-		String message;
+	public boolean connect() {
+		String message = "";
 		try {
 			Class.forName(classForName);
 			File file = new File(dbDir);
@@ -37,7 +39,6 @@ public class DBManager {
 			}
 			DriverManager.registerDriver(new JDBC());
 			connection = DriverManager.getConnection(dbConnectionString + dbDir + "/" + dbName); 
-			message = "DB connection success!";
 		} catch (SQLException e) {
 			e.printStackTrace();
 			message = "DB connection error!";
@@ -45,23 +46,21 @@ public class DBManager {
 			e.printStackTrace();
 			message = "ClassNotFoundException";
 		}
-		System.out.println(message);
 		
-		PreparedStatement statement;
-		try {
-			statement = connection.prepareStatement(
-					"CREATE TABLE IF NOT EXISTS RDP_TABLE (ID INTEGER PRIMARY KEY AUTOINCREMENT, PATH TEXT, STATUS INTEGER)"
-					);
-
-			statement.execute();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(message.isEmpty()) {
+			System.out.println("DB connection success!");
+			return true;
 		}
+		System.out.println(message);
+		return false;
 	}
 	
-	public void Close() {
+	public void close() {
 		String message;
+		if(connection == null) {
+			System.out.println("DB is missing!");
+			return;
+		}
 		try {
 			connection.close();
 			message = "DB is closed!";
@@ -72,16 +71,17 @@ public class DBManager {
 		System.out.println(message);
 	}
 	
-	public void AddNewRDPLine(DataLines.RDPLine RDPLine) {
-		String queryStr = "INSERT Into RDP_TABLE " + DataLines.getDataLineFielsString(RDPLine) + " " + DataLines.getDataLineFieldsValueSampl(RDPLine);
-		try {
-			PreparedStatement statement = connection.prepareStatement(queryStr);
-			statement = DataLines.setStatementObjectByDataLine(statement, RDPLine);
-			statement.execute();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void initTables() {
+		rec_RDP = new r_RDP(connection);
 	}
 	
+	///
+	public r_RDP getRDPRec() {
+		return rec_RDP;
+	}
+	///
+	
+	public void checkTables() {
+		getRDPRec().createTable();
+	}
 }
